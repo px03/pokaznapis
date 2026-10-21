@@ -4,6 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PokażNapis</title>
+    <meta name="description" content="Przekaż informacje pokazując czytelny napis na ekranie.">
+    <meta name="theme-color" content="#121212">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="PokażNapis">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <style>
         *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',sans-serif;transition:background-color .3s,color .3s,border-color .3s}
         body{background-color:#121212;color:#fff;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px}
@@ -338,7 +347,12 @@
         let activeEditingTemplate = null;
 
         const openKeyboard = () => getEl('text-input').focus();
-        const updateTheme = () => document.body.className = document.querySelector('input[name="bg-color"]:checked').value === 'white' ? 'theme-white' : 'theme-black';
+        const updateTheme = () => {
+            const white = document.querySelector('input[name="bg-color"]:checked').value === 'white';
+            document.body.className = white ? 'theme-white' : 'theme-black';
+            const meta = document.querySelector('meta[name="theme-color"]');
+            if (meta) meta.setAttribute('content', white ? '#f0f2f5' : '#121212');
+        };
         const toggleSizeOptions = () => getEl('manual-size-group').style.display = getEl('auto-size').checked ? 'none' : 'block';
         const toggleScrollOptions = () => {
             const on = getEl('scroll-text').checked;
@@ -809,6 +823,11 @@
         getEl('auto-size').addEventListener('change', () => syncScrollState(true));
         window.addEventListener('resize', () => syncScrollState(true));
         syncScrollState(false);
+
+        // PWA – rejestracja service workera (działa tylko przez HTTPS / localhost)
+        if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+            window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+        }
     </script>
 </body>
 </html>
