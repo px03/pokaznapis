@@ -26,6 +26,14 @@
         .keyboard-btn{display:none;position:absolute;right:12px;background:none;border:none;font-size:1.5rem;cursor:pointer;padding:5px;opacity:.7}
         .keyboard-btn:hover{opacity:1}
         @media(pointer:coarse){.keyboard-btn{display:block}input[type="text"]{padding-right:50px}}
+        button.accordion-toggle{width:100%;display:flex;justify-content:space-between;align-items:center;background:#2a2a2a;color:#ddd;border:2px solid #333;border-radius:8px;padding:14px 16px;font-size:1.1rem;font-weight:600;cursor:pointer;text-align:left}
+        body.theme-white button.accordion-toggle{background:#f9f9f9;color:#333;border-color:#ccc}
+        .accordion-title{display:flex;align-items:center}
+        .accordion-dot{display:none;width:10px;height:10px;border-radius:50%;background:#4da6ff;margin-left:10px}
+        .accordion-arrow{transition:transform .2s;font-size:.9rem}
+        .accordion-toggle.open .accordion-arrow{transform:rotate(180deg)}
+        .accordion-body{display:none;margin-top:25px}
+        .accordion-body.open{display:block}
         .label-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:10px}
         .label-row label{margin-bottom:0}
         .mic-btn{display:none;width:38px;height:38px;border-radius:50%;border:2px solid #555;background:#2a2a2a;color:#fff;font-size:1.15rem;cursor:pointer;align-items:center;justify-content:center;padding:0;flex-shrink:0}
@@ -45,7 +53,7 @@
         .slider-container{display:flex;align-items:center;gap:15px}
         input[type="range"]{flex:1;height:10px;cursor:pointer;accent-color:#4da6ff}
         .slider-labels{display:flex;justify-content:space-between;font-size:.95rem;color:#888;margin-top:6px}
-        .static-color-options{display:none;background-color:#262626;padding:20px;border-radius:10px;margin-top:15px}
+        .static-color-options{display:none;background-color:#262626;padding:20px;border-radius:10px;margin-top:15px;margin-bottom:25px}
         body.theme-white .static-color-options{background-color:#f0f0f0}
         .color-picker-trigger-wrapper{display:flex;align-items:center;gap:15px;margin-bottom:15px}
         .color-preview-btn{width:44px;height:44px;border-radius:8px;border:2px solid #555;cursor:pointer;background-color:#ff0000;box-shadow:0 2px 6px rgba(0,0,0,.3);transition:transform .1s}
@@ -180,6 +188,12 @@
         </div>
 
         <div class="form-group">
+            <button type="button" class="accordion-toggle" id="more-toggle" onclick="toggleMore()">
+                <span class="accordion-title">Więcej ustawień<span class="accordion-dot" id="more-dot"></span></span>
+                <span class="accordion-arrow">▼</span>
+            </button>
+            <div class="accordion-body" id="more-body">
+        <div class="form-group">
             <label>Wybierz kolor tła tekstu:</label>
             <div class="radio-group">
                 <label class="radio-option"><input type="radio" name="bg-color" value="black" checked onchange="updateTheme()"> Czarne</label>
@@ -193,6 +207,18 @@
                 <label for="size-slider">Wielkość tekstu:</label>
                 <div class="slider-container"><input type="range" id="size-slider" min="3" max="30" step="1" value="12"></div>
                 <div class="slider-labels"><span>Mały</span><span>Duży</span></div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="checkbox-option" style="margin-bottom:10px;"><input type="checkbox" id="scroll-text" onchange="onScrollToggle()"> Przewijaj długi tekst</label>
+            <div class="scroll-warning" id="scroll-warning">⚠️Nie działa poprawnie przy krótkich tekstach⚠️</div>
+            <div id="scroll-speed-group" style="display:none;">
+                <label for="scroll-slider">Szybkość przewijania:</label>
+                <div class="slider-container"><input type="range" id="scroll-slider" min="1" max="10" step="1" value="5"></div>
+                <div class="slider-labels"><span>Wolno</span><span>Szybko</span></div>
+            </div>
+        </div>
             </div>
         </div>
 
@@ -217,16 +243,6 @@
                 <button type="button" class="grad-choice" onclick="selectGradient(0)"></button>
                 <button type="button" class="grad-choice" onclick="selectGradient(1)"></button>
                 <button type="button" class="grad-choice" onclick="selectGradient(2)"></button>
-            </div>
-        </div>
-
-        <div class="form-group" style="margin-top:20px;">
-            <label class="checkbox-option" style="margin-bottom:10px;"><input type="checkbox" id="scroll-text" onchange="onScrollToggle()"> Przewijaj długi tekst</label>
-            <div class="scroll-warning" id="scroll-warning">⚠️Nie działa poprawnie przy krótkich tekstach⚠️</div>
-            <div id="scroll-speed-group" style="display:none;">
-                <label for="scroll-slider">Szybkość przewijania:</label>
-                <div class="slider-container"><input type="range" id="scroll-slider" min="1" max="10" step="1" value="5"></div>
-                <div class="slider-labels"><span>Wolno</span><span>Szybko</span></div>
             </div>
         </div>
 
@@ -324,7 +340,16 @@
         const openKeyboard = () => getEl('text-input').focus();
         const updateTheme = () => document.body.className = document.querySelector('input[name="bg-color"]:checked').value === 'white' ? 'theme-white' : 'theme-black';
         const toggleSizeOptions = () => getEl('manual-size-group').style.display = getEl('auto-size').checked ? 'none' : 'block';
-        const toggleScrollOptions = () => getEl('scroll-speed-group').style.display = getEl('scroll-text').checked ? 'block' : 'none';
+        const toggleScrollOptions = () => {
+            const on = getEl('scroll-text').checked;
+            getEl('scroll-speed-group').style.display = on ? 'block' : 'none';
+            getEl('more-dot').style.display = on ? 'inline-block' : 'none';
+        };
+
+        function toggleMore() {
+            getEl('more-toggle').classList.toggle('open');
+            getEl('more-body').classList.toggle('open');
+        }
 
         let lastOverflow = null, scrollAutoSet = false;
 
