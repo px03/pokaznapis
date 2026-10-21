@@ -70,10 +70,10 @@
         button.action-btn{width:100%;padding:18px;background-color:#4da6ff;color:#fff;border:none;border-radius:8px;font-size:1.3rem;font-weight:bold;cursor:pointer;transition:background .2s,transform .1s;margin-top:10px}
         button.action-btn:hover{background-color:#3385ff}
         button.action-btn:active{transform:scale(.99)}
-        button.reset-btn{background-color:#2a2a2a;color:#aaa;border:2px solid #777;margin-top:12px;padding:10px;font-size:1rem;font-weight:600}
-        body.theme-white button.reset-btn{background-color:#f9f9f9;color:#555;border-color:#888}
-        button.reset-btn:hover{background-color:#2a2a2a;color:#aaa}
-        body.theme-white button.reset-btn:hover{background-color:#f9f9f9;color:#555}
+        button.reset-btn,button.exit-btn{background-color:#2a2a2a;color:#aaa;border:2px solid #777;margin-top:12px;padding:10px;font-size:1rem;font-weight:600}
+        body.theme-white button.reset-btn,body.theme-white button.exit-btn{background-color:#f9f9f9;color:#555;border-color:#888}
+        button.reset-btn:hover,button.exit-btn:hover{background-color:#2a2a2a;color:#aaa}
+        body.theme-white button.reset-btn:hover,body.theme-white button.exit-btn:hover{background-color:#f9f9f9;color:#555}
 
         .color-modal-overlay,.templates-modal-overlay{display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);z-index:20000;justify-content:center;align-items:center}
         .color-modal,.templates-modal{background:#222;color:#fff;padding:24px;border-radius:16px;width:340px;box-shadow:0 10px 30px rgba(0,0,0,.8);border:1px solid #444}
@@ -118,7 +118,11 @@
         #hsv-val{background:linear-gradient(to right,#000,#fff)}
         .hsv-slider::-webkit-slider-thumb{width:20px;height:24px;background:#4da6ff;border-radius:4px;border:1px solid #fff;cursor:pointer}
 
-        #templates-modal-overlay{height:100vh;height:100dvh;padding:16px}
+        #templates-modal-overlay,#unsaved-modal-overlay{height:100vh;height:100dvh;padding:16px}
+        .unsaved-modal{max-width:100%;max-height:calc(100vh - 32px);max-height:calc(100dvh - 32px);overflow-y:auto;border-radius:24px}
+        .unsaved-modal p{line-height:1.5;color:#ccc;margin-bottom:4px}
+        body.theme-white .unsaved-modal p{color:#444}
+        .modal-btn.modal-btn-danger,body.theme-white .modal-btn.modal-btn-danger{color:#ea4335;font-weight:700}
         .templates-modal{display:flex;flex-direction:column;max-height:calc(100vh - 32px);max-height:calc(100dvh - 32px);border-radius:24px}
         .templates-modal h3{text-align:center;margin-bottom:18px}
         @media(min-width:768px){.templates-modal{width:min(820px,calc(100vw - 40px))}}
@@ -197,6 +201,30 @@
         </div>
 
         <div class="form-group">
+            <label class="checkbox-option"><input type="checkbox" id="disable-blink" onchange="toggleBlinkingOptions()"> Wyłącz mruganie tekstu</label>
+        </div>
+
+        <div class="form-group" id="blink-speed-group">
+            <label for="speed-slider">Szybkość zmiany kolorów:</label>
+            <div class="slider-container"><input type="range" id="speed-slider" min="0.1" max="2" step="0.1" value="0.5"></div>
+            <div class="slider-labels"><span>Wolno</span><span>Szybko</span></div>
+        </div>
+
+        <div class="static-color-options" id="static-color-group">
+            <div class="color-picker-trigger-wrapper">
+                <div class="color-preview-btn" id="color-preview-btn" onclick="openColorModal()"></div>
+                <label id="color-picker-label" style="margin-bottom:0;cursor:pointer;" onclick="openColorModal()">Wybierz własny kolor tekstu</label>
+            </div>
+            <label class="checkbox-option"><input type="checkbox" id="auto-contrast-color" onchange="onAutoContrast()"> kolor czarny/biały (zależnie od tła)</label>
+            <label class="checkbox-option" style="margin-top:14px;"><input type="checkbox" id="anim-gradient" onchange="onAnimGradient()"> Animowany gradient</label>
+            <div class="grad-choices" id="grad-choices">
+                <button type="button" class="grad-choice" onclick="selectGradient(0)"></button>
+                <button type="button" class="grad-choice" onclick="selectGradient(1)"></button>
+                <button type="button" class="grad-choice" onclick="selectGradient(2)"></button>
+            </div>
+        </div>
+
+        <div class="form-group">
             <button type="button" class="accordion-toggle" id="more-toggle" onclick="toggleMore()">
                 <span class="accordion-title">Więcej ustawień<span class="accordion-dot" id="more-dot"></span></span>
                 <span class="accordion-arrow">▼</span>
@@ -231,37 +259,26 @@
             </div>
         </div>
 
-        <div class="form-group">
-            <label class="checkbox-option"><input type="checkbox" id="disable-blink" onchange="toggleBlinkingOptions()"> Wyłącz mruganie tekstu</label>
-        </div>
-
-        <div class="form-group" id="blink-speed-group">
-            <label for="speed-slider">Szybkość zmiany kolorów:</label>
-            <div class="slider-container"><input type="range" id="speed-slider" min="0.1" max="2" step="0.1" value="0.5"></div>
-            <div class="slider-labels"><span>Wolno</span><span>Szybko</span></div>
-        </div>
-
-        <div class="static-color-options" id="static-color-group">
-            <div class="color-picker-trigger-wrapper">
-                <div class="color-preview-btn" id="color-preview-btn" onclick="openColorModal()"></div>
-                <label id="color-picker-label" style="margin-bottom:0;cursor:pointer;" onclick="openColorModal()">Wybierz własny kolor tekstu</label>
-            </div>
-            <label class="checkbox-option"><input type="checkbox" id="auto-contrast-color" onchange="onAutoContrast()"> kolor czarny/biały (zależnie od tła)</label>
-            <label class="checkbox-option" style="margin-top:14px;"><input type="checkbox" id="anim-gradient" onchange="onAnimGradient()"> Animowany gradient</label>
-            <div class="grad-choices" id="grad-choices">
-                <button type="button" class="grad-choice" onclick="selectGradient(0)"></button>
-                <button type="button" class="grad-choice" onclick="selectGradient(1)"></button>
-                <button type="button" class="grad-choice" onclick="selectGradient(2)"></button>
-            </div>
-        </div>
-
         <button class="action-btn" id="action-main-btn" onclick="showText()">POKAŻ NA EKRANIE</button>
         <button class="action-btn templates-btn" id="templates-trigger-btn" onclick="openTemplatesModal()">Szablony</button>
+        <button class="action-btn exit-btn" id="exit-template-btn" style="display:none;" onclick="requestExitTemplate()">Wyjdź z szablonu</button>
         <button class="action-btn reset-btn" id="reset-btn" onclick="resetSettings()">Resetuj</button>
     </div>
 
     <div id="fit-probe"></div>
     <div id="fit-measure"></div>
+
+    <!-- Modal: Niezapisane zmiany -->
+    <div class="color-modal-overlay" id="unsaved-modal-overlay">
+        <div class="color-modal unsaved-modal">
+            <h3>Niezapisane zmiany</h3>
+            <p>Zmiany w tym szablonie nie zostały zapisane. Jeśli wyjdziesz, zostaną utracone.</p>
+            <div class="modal-actions">
+                <button class="modal-btn" onclick="closeUnsavedModal()">Wróć</button>
+                <button class="modal-btn modal-btn-danger" onclick="confirmExitTemplate()">Wyjdź</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Modal Szablonów -->
     <div class="templates-modal-overlay" id="templates-modal-overlay">
@@ -569,6 +586,7 @@
         const TPL_DEFAULT = {text:'', bgColor:'black', autoSize:true, sizeVal:12, disableBlink:false, speedVal:0.5, autoContrast:false, confirmedColor:'#ff0000', animGradient:false, animGradIdx:0, scrollText:false, scrollVal:5};
         let formSnapshot = null;
         let activeEditingName = '';
+        let editOriginal = '';
 
         function getFormState() {
             return {
@@ -675,6 +693,7 @@
 
             const raw = localStorage.getItem('pokaz_napis_tpl_' + i);
             applyFormState(raw ? JSON.parse(raw) : TPL_DEFAULT);
+            editOriginal = JSON.stringify(getFormState());
 
             // Zmiana wyglądu strony głównej na tryb edycji szablonu
             getEl('main-title').textContent = `SZABLON ${i}`;
@@ -683,8 +702,30 @@
             actionBtn.textContent = 'ZAPISZ';
             actionBtn.setAttribute('onclick', 'saveActiveTemplate()');
             getEl('templates-trigger-btn').style.display = 'none';
+            getEl('exit-template-btn').style.display = 'block';
 
             closeTemplatesModal();
+        }
+
+        function hasUnsavedChanges() {
+            return activeEditingTemplate !== null && JSON.stringify(getFormState()) !== editOriginal;
+        }
+
+        function requestExitTemplate() {
+            if (hasUnsavedChanges()) getEl('unsaved-modal-overlay').style.display = 'flex';
+            else exitTemplate();
+        }
+
+        function closeUnsavedModal() { getEl('unsaved-modal-overlay').style.display = 'none'; }
+
+        function confirmExitTemplate() {
+            closeUnsavedModal();
+            exitTemplate();
+        }
+
+        function exitTemplate() {
+            resetMainView();
+            openTemplatesModal();
         }
 
         function saveActiveTemplate() {
@@ -725,6 +766,7 @@
             actionBtn.textContent = 'POKAŻ NA EKRANIE';
             actionBtn.setAttribute('onclick', 'showText()');
             getEl('templates-trigger-btn').style.display = 'block';
+            getEl('exit-template-btn').style.display = 'none';
         }
 
         const parseFormatting = text => text
@@ -807,7 +849,8 @@
 
         document.addEventListener('keydown', e => {
             if (e.key === 'Escape') {
-                if (getEl('color-modal-overlay').style.display === 'flex') closeColorModal();
+                if (getEl('unsaved-modal-overlay').style.display === 'flex') closeUnsavedModal();
+                else if (getEl('color-modal-overlay').style.display === 'flex') closeColorModal();
                 else if (getEl('templates-modal-overlay').style.display === 'flex') closeTemplatesModal();
                 else hideText();
             }
