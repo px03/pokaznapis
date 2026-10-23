@@ -38,7 +38,8 @@
         button.accordion-toggle{width:100%;display:flex;justify-content:space-between;align-items:center;background:#2a2a2a;color:#ddd;border:2px solid #333;border-radius:8px;padding:14px 16px;font-size:1.1rem;font-weight:600;cursor:pointer;text-align:left}
         body.theme-white button.accordion-toggle{background:#f9f9f9;color:#333;border-color:#ccc}
         .accordion-title{display:flex;align-items:center}
-        .accordion-dot{display:none;width:10px;height:10px;border-radius:50%;background:#4da6ff;margin-left:10px}
+        .accordion-dot{display:none;width:10px;height:10px;border-radius:50%;background:#fbbc05;margin-left:10px}
+        body.theme-white .accordion-dot{background:#b36b00}
         .accordion-arrow{transition:transform .2s;font-size:.9rem}
         .accordion-toggle.open .accordion-arrow{transform:rotate(180deg)}
         .accordion-body{display:none;margin-top:25px}
@@ -250,6 +251,7 @@
         <div class="form-group">
             <label class="checkbox-option" style="margin-bottom:10px;"><input type="checkbox" id="scroll-text" onchange="onScrollToggle()"> Przewijaj długi tekst</label>
             <div class="scroll-warning" id="scroll-warning">⚠️Nie działa poprawnie przy krótkich tekstach⚠️</div>
+            <div class="scroll-warning" id="scroll-warning-long">⚠️Nie działa poprawnie przy długich tekstach⚠️</div>
             <div id="scroll-speed-group" style="display:none;">
                 <label for="scroll-slider">Szybkość przewijania:</label>
                 <div class="slider-container"><input type="range" id="scroll-slider" min="1" max="10" step="1" value="5"></div>
@@ -374,7 +376,6 @@
         const toggleScrollOptions = () => {
             const on = getEl('scroll-text').checked;
             getEl('scroll-speed-group').style.display = on ? 'block' : 'none';
-            getEl('more-dot').style.display = on ? 'inline-block' : 'none';
         };
 
         function toggleMore() {
@@ -402,7 +403,10 @@
                 cb.checked = false; scrollAutoSet = false; toggleScrollOptions();
             }
             lastOverflow = over;
-            getEl('scroll-warning').style.display = (cb.checked && !over) ? 'block' : 'none';
+            const tooShort = cb.checked && !over, tooLong = !cb.checked && over;
+            getEl('scroll-warning').style.display = tooShort ? 'block' : 'none';
+            getEl('scroll-warning-long').style.display = tooLong ? 'block' : 'none';
+            getEl('more-dot').style.display = (tooShort || tooLong) ? 'inline-block' : 'none';
         }
 
         function onScrollToggle() {
