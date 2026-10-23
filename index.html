@@ -854,6 +854,15 @@
                 else if (getEl('templates-modal-overlay').style.display === 'flex') closeTemplatesModal();
                 else hideText();
             }
+            // Enter poza polem wpisywania (tylko PC) = "POKAŻ NA EKRANIE"
+            else if (e.key === 'Enter' && !window.matchMedia('(pointer: coarse)').matches) {
+                const t = e.target, tag = t.tagName;
+                if (tag === 'TEXTAREA' || tag === 'BUTTON' || tag === 'SELECT' || t.isContentEditable || (tag === 'INPUT' && t.type === 'text')) return;
+                const modalOpen = ['unsaved-modal-overlay', 'color-modal-overlay', 'templates-modal-overlay'].some(id => getEl(id).style.display === 'flex');
+                if (modalOpen || getEl('display-screen').style.display === 'flex' || activeEditingTemplate !== null) return;
+                e.preventDefault();
+                showText();
+            }
         });
 
         setSwatch(getEl('color-preview-btn'), confirmedColor);
